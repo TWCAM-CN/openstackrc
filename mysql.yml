@@ -1,0 +1,17 @@
+#cloud-config
+package_update: true
+packages:
+  - iperf
+  - mysql-server
+
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    passwd: contraseña_por_defecto # Reemplazar con la contraseña deseada
+
+runcmd:
+  - mkfs.ext4 /dev/vdb
+  - mkdir -p /mnt/mysql_data
+  - echo '/dev/vdb /mnt/mysql_data ext4 defaults 0 0' >> /etc/fstab
+  - mount -a
