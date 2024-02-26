@@ -1,17 +1,15 @@
 #cloud-config
-package_update: true
+password: <PASSWORD>
+chpassword:
+	expire: false
+	ssh_pwauth: true
 packages:
   - iperf
-  - mysql-server
-
-users:
-  - name: ubuntu
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    lock_passwd: false
-    passwd: 12345
-
+  - tomcat9
+mounts:
+  - [ /dev/vdb, /var/lib/tomcat9, ext4, "defaults", 0, 2 ]
 runcmd:
-  - mkfs.ext4 /dev/vdb
-  - mkdir -p /mnt/mysql_data
-  - echo '/dev/vdb /mnt/mysql_data ext4 defaults 0 0' >> /etc/fstab
-  - mount -a
+  - [ mkfs.ext4, /dev/vdb ]
+  - [ mkdir, -p, /var/lib/tomcat9 ]
+  - [ mount, /dev/vdb, /var/lib/tomcat9 ]
+
