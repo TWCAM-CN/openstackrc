@@ -21,14 +21,10 @@ echo ""
 
 
 # INTERFACES
-# Obtener el ID de la red interna ("proyecto11-network")
-# red_interna_id=$(openstack network show proyecto11-network -f value -c id)
-# echo "Red interna ID: $red_interna_id"
-# echo ""
 
 # Agregar una interfaz del router a la red interna
 echo "Vinculando Red-Interna a Router"
-openstack router add subnet proyecto11-router proyecto11-network
+openstack router add subnet proyecto11-router proyecto11-subnet
 echo ""
 
 # Obtener el ID de la red externa ("external-network")
@@ -75,9 +71,34 @@ echo ""
 
 
 # VOLUMEN
-echo "Creando volumen Tomcat"
+# Tomcat
+echo "Creando volumen Tomcat..."
 openstack volume create --size 1 volume-tomcat
-echo ""
 
-echo "Creando volumen Mysqls"
+status_volume_tomcat= $(openstack volume show volume-mysql -f value -c status)
+# Bucle while que se ejecutará mientras la variable sea diferente de "available"
+while [ "$status_volume_tomcat" != "available" ]; do
+    echo "Esperando a que el Volumen de Tomcat este disponible..."
+
+    new_status= $(openstack volume show volume-mysql -f value -c status)
+    status_volume_tomcat="$new_status"
+
+    sleep 2
+done
+echo "Volumen Tomcat creado correctamente!"
+
+#MySQL
+echo "Creando volumen MySQL..."
 openstack volume create --size 1 volume-mysql
+
+status_volume_mysql= $(openstack volume show volume-mysql -f value -c status)
+# Bucle while que se ejecutará mientras la variable sea diferente de "available"
+while [ "$status_volume_mysql" != "available" ]; do
+    echo "Esperando a que el Volumen de MySQL este disponible..."
+
+    new_status= $(openstack volume show volume-mysql -f value -c status)
+    status_volume_tomcat="$new_status"
+
+    sleep 2
+done
+echo "Volumen MySQL creado correctamente!"
