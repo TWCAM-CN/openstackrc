@@ -53,5 +53,9 @@ openstack volume create --size 1 volume-mysql
 
 
 # EJECUTAR INSTANCIA
-openstack server create --flavor labs --image ubuntu-focal --user-data mysql.yml --key-name "CLAVE" --nic net-id="ID-RED" --security-group proyecto11-security-group instance-mysql
 
+openstack server create --image ubuntu-focal --flavor labs  \
+--user-data tomcat.yml \
+--nic net-id=$red_interna_id \
+--security-group proyecto11-security-group \
+--key-name proyecto11 proyecto11-tomcat

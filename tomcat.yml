@@ -8,7 +8,7 @@ users:
   - name: ubuntu
     sudo: ALL=(ALL) NOPASSWD:ALL
     lock_passwd: false
-    passwd: contraseña_por_defecto # Reemplazar con la contraseña deseada
+    passwd: 12345
 
 runcmd:
   - mkfs.ext4 /dev/vdb
