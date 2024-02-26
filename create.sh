@@ -13,6 +13,7 @@ openstack subnet create \
      proyecto11-subnet
 echo ""
 
+
 # ROUTER
 # Crear el router
 echo "Creando Router..."
@@ -21,7 +22,6 @@ echo ""
 
 
 # INTERFACES
-
 # Agregar una interfaz del router a la red interna
 echo "Vinculando Red-Interna a Router"
 openstack router add subnet proyecto11-router proyecto11-subnet
@@ -73,14 +73,14 @@ echo ""
 # VOLUMEN
 # Tomcat
 echo "Creando volumen Tomcat..."
-openstack volume create --size 1 volume-tomcat
+openstack volume create --size 1 proyecto11-volume-tomcat
 
-status_volume_tomcat= $(openstack volume show volume-tomcat -f value -c status)
+status_volume_tomcat=$(openstack volume show proyecto11-volume-tomcat -f value -c status)
 # Bucle while que se ejecutará mientras la variable sea diferente de "available"
 while [ "$status_volume_tomcat" != "available" ]; do
     echo "Esperando a que el Volumen de Tomcat este disponible..."
 
-    new_status= $(openstack volume show volume-tomcat -f value -c status)
+    new_status=$(openstack volume show proyecto11-volume-tomcat -f value -c status)
     status_volume_tomcat="$new_status"
 
     sleep 2
@@ -89,19 +89,76 @@ echo "Volumen Tomcat creado correctamente!"
 
 #MySQL
 echo "Creando volumen MySQL..."
-openstack volume create --size 1 volume-mysql
+openstack volume create --size 1 proyecto11-volume-mysql
 
-status_volume_mysql= $(openstack volume show volume-mysql -f value -c status)
+status_volume_mysql=$(openstack volume show proyecto11-volume-mysql -f value -c status)
 # Bucle while que se ejecutará mientras la variable sea diferente de "available"
 while [ "$status_volume_mysql" != "available" ]; do
     echo "Esperando a que el Volumen de MySQL este disponible..."
 
-    new_status= $(openstack volume show volume-mysql -f value -c status)
+    new_status=$(openstack volume show proyecto11-volume-mysql -f value -c status)
     status_volume_tomcat="$new_status"
 
     sleep 2
 done
 echo "Volumen MySQL creado correctamente!"
 
-# Añadir como salida: log e IP Pub
-# Validar todas las ejecuciones con un logger
+
+# INSTANCIAS
+
+# Obtenemos el ID de la red interna para asociarlo a la instancia
+red_interna_id=$(openstack network show proyecto11-network -f value -c id)
+
+# Tomcat
+openstack server create \
+    --image ubuntu-focal \
+    --flavor labs \
+    --user-data tomcat.yml \
+    --nic net-id=$red_interna_id\
+    --security-group proyecto11-security-group \
+    proyecto11-instance-tomcat
+
+# Bucle para esperar a que la instancia esté disponible
+status_server_tomcat=$(openstack server show proyecto11-instance-tomcat -f value -c status)
+while [ "$status_server_tomcat" != "ACTIVE" ]; do
+        echo "Esperando a que la Instancia de Tomcat este disponible..."
+        new_status=$(openstack server show proyecto11-instance-tomcat -f value -c status)
+        status_server_tomcat="$new_status"
+        sleep 2
+done
+echo "Instancia de Tomcat creada correctamente!"
+
+# Asociar instancia a Volumen
+# Obtener el ID de la instancia
+tomcat_instancia_id=$(openstack server show -f value -c id proyecto11-instance-tomcat)
+# Obtener el ID del volumen
+tomcat_volumen_id=$(openstack volume show -f value -c id proyecto-11-volume-tomcat)
+# Asociar IDs
+openstack server add volume $tomcat_instancia_id $tomcat_volumen_id
+
+# MySQL
+openstack server create \
+    --image ubuntu-focal \
+    --flavor labs \
+    --user-data mysql.yml \
+    --nic net-id=$red_interna_id\
+    --security-group proyecto11-security-group \
+    proyecto11-instance-mysql
+
+# Bucle para esperar a que la instancia esté disponible
+status_server_mysql=$(openstack server show proyecto11-instance-mysql -f value -c status)
+while [ "$status_server_mysql" != "ACTIVE" ]; do
+        echo "Esperando a que la Instancia de MySQL este disponible..."
+        new_status=$(openstack server show proyecto11-instance-mysql -f value -c status)
+        status_server_mysql="$new_status"
+        sleep 2
+done
+echo "Instancia de MySQL creada correctamente!"
+
+# Asociar instancia a Volumen
+# Obtener el ID de la instancia
+myqsl_instancia_id=$(openstack server show -f value -c id proyecto11-instance-mysql)
+# Obtener el ID del volumen
+mysql_volumen_id=$(openstack volume show -f value -c id proyecto-11-volume-mysql)
+# Asociar IDs
+openstack server add volume $myqsl_instancia_id $mysql_volumen_id

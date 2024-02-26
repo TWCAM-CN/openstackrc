@@ -8,7 +8,7 @@ users:
   - name: ubuntu
     sudo: ALL=(ALL) NOPASSWD:ALL
     lock_passwd: false
-    passwd: 12345
+    passwd: twcam$2023*
 
 runcmd:
   - mkfs.ext4 /dev/vdb
