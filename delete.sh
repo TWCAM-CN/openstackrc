@@ -2,12 +2,12 @@
 
 # VOLUMENES
 echo "Eliminando volumen Tomcat..."
-openstack volume delete volume-tomcat
+openstack volume delete proyecto11-volume-tomcat
 echo "Volumen Tomcat eliminado correctamente!"
 echo ""
 
 echo "Eliminando volumen MySQL..."
-openstack volume delete volume-mysql
+openstack volume delete proyecto11-volume-mysql
 echo "Volumen MySQL eliminado correctamente!"
 echo ""
 
