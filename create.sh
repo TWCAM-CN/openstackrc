@@ -75,12 +75,12 @@ echo ""
 echo "Creando volumen Tomcat..."
 openstack volume create --size 1 volume-tomcat
 
-status_volume_tomcat= $(openstack volume show volume-mysql -f value -c status)
+status_volume_tomcat= $(openstack volume show volume-tomcat -f value -c status)
 # Bucle while que se ejecutará mientras la variable sea diferente de "available"
 while [ "$status_volume_tomcat" != "available" ]; do
     echo "Esperando a que el Volumen de Tomcat este disponible..."
 
-    new_status= $(openstack volume show volume-mysql -f value -c status)
+    new_status= $(openstack volume show volume-tomcat -f value -c status)
     status_volume_tomcat="$new_status"
 
     sleep 2
@@ -102,3 +102,6 @@ while [ "$status_volume_mysql" != "available" ]; do
     sleep 2
 done
 echo "Volumen MySQL creado correctamente!"
+
+# Añadir como salida: log e IP Pub
+# Validar todas las ejecuciones con un logger
