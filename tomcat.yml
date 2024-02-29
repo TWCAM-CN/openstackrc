@@ -1,5 +1,5 @@
 #cloud-config
-password: <PASSWORD>
+password: twcam2023$
 chpassword:
 	expire: false
 	ssh_pwauth: true
