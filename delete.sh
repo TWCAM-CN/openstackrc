@@ -24,7 +24,7 @@ echo ""
 # ELIMINACIÓN DE IP FLOTANTE
 # Tomcat
 echo "Verificando y eliminando IP Flotante de Tomcat..."
-tomcat_floating_ip_id=$(openstack floating ip list --long | grep "proyeto11-floatingip-tomcat" | awk '{print $2}')
+tomcat_floating_ip_id=$(openstack floating ip list --long | grep "proyecto11-floatingip-tomcat" | awk '{print $2}')
 if [ ! -z "$tomcat_floating_ip_id" ]; then
     openstack floating ip delete $tomcat_floating_ip_id
     echo "IP Flotante de Tomcat eliminada correctamente."
@@ -35,7 +35,7 @@ echo ""
 
 # MySQL
 echo "Verificando y eliminando IP Flotante de MySQL..."
-mysql_floating_ip_id=$(openstack floating ip list --long | grep "proyeto11-floatingip-mysql" | awk '{print $2}')
+mysql_floating_ip_id=$(openstack floating ip list --long | grep "proyecto11-floatingip-mysql" | awk '{print $2}')
 if [ ! -z "$mysql_floating_ip_id" ]; then
     openstack floating ip delete $mysql_floating_ip_id
     echo "IP Flotante de MySQL eliminada correctamente."
