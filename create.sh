@@ -130,9 +130,9 @@ echo "Instancia de Tomcat creada correctamente!"
 
 # Asociar instancia a Volumen
 # Obtener el ID de la instancia
-tomcat_instancia_id=$(openstack server show -f value -c id proyecto11-instance-tomcat)
+tomcat_instancia_id=$(openstack server show -f value -c id proyecto11instance-tomcat)
 # Obtener el ID del volumen
-tomcat_volumen_id=$(openstack volume show -f value -c id proyecto-11-volume-tomcat)
+tomcat_volumen_id=$(openstack volume show -f value -c id proyecto11-volume-tomcat)
 # Asociar IDs
 openstack server add volume $tomcat_instancia_id $tomcat_volumen_id
 
@@ -162,3 +162,32 @@ myqsl_instancia_id=$(openstack server show -f value -c id proyecto11-instance-my
 mysql_volumen_id=$(openstack volume show -f value -c id proyecto-11-volume-mysql)
 # Asociar IDs
 openstack server add volume $myqsl_instancia_id $mysql_volumen_id
+
+
+# IP FLOTANTE
+# Creacion de IP Flotante para cada instancia
+echo "Creando IP Flotante para Tomcat..."
+openstack floating ip create external-network --description proyeto11-floatingip-tomcat
+echo ""
+
+echo "Creando IP Flotante para MySQL..."
+openstack floating ip create external-network --description proyeto11-floatingip-mysql
+echo ""
+
+# Obtener la IP asignada
+echo "Obteniendo IP Flotante asignada para Tomcat..."
+tomcat_floatingip=$(openstack floating ip list --long | grep "proyeto11-floatingip-tomcat" | awk '{print $4}')
+echo ""
+
+echo "Obteniendo IP Flotante asignada para MySQL"
+mysql_floatingip=$(openstack floating ip list --long | grep "proyeto11-floatingip-mysql" | awk '{print $4}')
+echo ""
+
+# Asigna la IP
+echo "Vincunlando IP Flotante a Instancia de Tomcat.."
+openstack server add floating ip proyecto11-instance-tomcat $tomcat_floatingip
+echo ""
+
+echo "Vinculando IP Flotante a Instancia de MySQL"
+openstack server add floating ip proyecto11-instance-mysql $myqsl_instancia_id
+echo ""
