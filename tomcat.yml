@@ -1,15 +1,19 @@
 #cloud-config
-password: twcam2023$
-chpassword:
-	expire: false
-	ssh_pwauth: true
+password: twcam2023
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDg8Nyku3bipbAqoTkz9g8k6a+UBfE6OeZMCHSmWZKRDZIbbRwXZIq/N9daCTyKn5uMlUQGKPgjcYpeLDalU4yDSIDllW71EyB3uxAHwArD3Mzx/gRP0xiybCLG43gpw7kQ/Cnt2hV8JRsP52OQwafRR2FclsmQRH6BN9/AreUftCRE/wj8MPAGGzdcxJryAeHELlHLCEFeIkCXCfJplQPYnUXmcjD1KeJ9kSSd7mEtFnXxwg3j4nmdSNu5w3eZ74mlG6HudnHG9MxPW5GVs0jEOXwJxn8owmoKChcuZ7aiQyp8mG9KLjGRoOJw7eVb0jVvkrAnNEEht+aebND2ms6n Generated-by-Nova
+    passwd: twcam2023
 packages:
   - iperf
   - tomcat9
 mounts:
-  - [ /dev/vdb, /var/lib/tomcat9, ext4, "defaults", 0, 2 ]
+  - [ /dev/vdb, /var/lib/tomcat9/webapps, ext4, "defaults", 0, 2 ]
 runcmd:
   - [ mkfs.ext4, /dev/vdb ]
-  - [ mkdir, -p, /var/lib/tomcat9 ]
-  - [ mount, /dev/vdb, /var/lib/tomcat9 ]
+  - [ mkdir, -p, /var/lib/tomcat9/webapps ]
+  - [ mount, /dev/vdb, /var/lib/tomcat9/webapps ]
 

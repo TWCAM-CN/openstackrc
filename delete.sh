@@ -80,11 +80,9 @@ echo "Verificando y desvinculando Red-Interna del Router..."
 if openstack router show proyecto11-router -f value -c id &>/dev/null; then
     openstack router remove subnet proyecto11-router proyecto11-subnet &>/dev/null
     echo "Red-Interna desvinculada del Router correctamente."
-    
     echo "Desvinculando Red-Externa del Router..."
     openstack router unset --external-gateway proyecto11-router &>/dev/null
     echo "Red-Externa desvinculada del Router correctamente."
-    
     echo "Eliminando Router..."
     openstack router delete proyecto11-router
     echo "Router eliminado correctamente."
